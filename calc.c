@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int array_lower1[5] = {3, 0, 7, 3, 10};
-int array_upper1[5] = {7, 5, 11, 5, 14};
-int array_lower_tri1[5] = {0, 3, 3, 7, 10};
-int array_upper_tri1[5] = {5, 5, 7, 11, 14};
+int array_lower1[5] = {1, 2, 4, 9, 10};
+int array_upper1[5] = {5, 7, 12, 13, 15};
+int array_lower_tri1[5] = {1, 2, 4, 9, 10};
+int array_upper_tri1[5] = {5, 7, 12, 13, 15};
 
-int array_lower2[5] = {11, 9, 3, 12, 0};
-int array_upper2[5] = {17, 15, 7, 14, 8};
-int array_lower_tri2[5] = {0, 3, 9, 11, 12};
-int array_upper_tri2[5] = {7, 8, 14, 15, 17};
+int array_lower2[5] = {0, 2, 7, 19, 22};
+int array_upper2[5] = {9, 14, 15, 27, 30};
+int array_lower_tri2[5] = {0, 2, 7, 19, 22};
+int array_upper_tri2[5] = {9, 14, 15, 27, 30};
 
 int statistic_target = 7; 		//nombre de buckets
 
@@ -114,7 +114,6 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 				increment = (array_upperx[j] - lower_bucket_bound) / bucket_length;
 				buckets[i] += increment ;
 			}
-			// else -> nothing happens
 		}
 		lower_bucket_bound = upper_bucket_bound;
 		upper_bucket_bound += bucket_length;
@@ -128,9 +127,9 @@ int	main(void)
 	float *bucket2;
 	int i = 0;
 	int *range_length = ft_range_length();
-
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, range_length);
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, range_length);
+
 	while (i < statistic_target)
 	{
 		printf("\nbucket1[%d] -> %.1f",i , bucket1[i]);
@@ -144,8 +143,5 @@ int	main(void)
 		i++;
 	}
 	printf("\n");
-	free (bucket1);
-	free (bucket2);
-	free (range_length);
 	return (0);
 }
