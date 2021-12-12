@@ -30,7 +30,7 @@ float	*ft_equiwidth_freq(int *array_lower, int *array_upper)
 	bucket = malloc(sizeof(float) * statistic_target + 1);
 	if (!bucket)
 		return NULL;
-	bucket[statistic_target + 1] = '\0';
+	bucket[statistic_target] = '\0';
 
 	for (i = 0; i < statistic_target; i++)
 	{

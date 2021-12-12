@@ -91,16 +91,16 @@ float ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_prop
 	return surfaceB2;
 }
 
-float	ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, float a_left_bin_proportion, float h_S_B2, int length_B)
+float	*ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, float a_left_bin_proportion, float h_S_B2, int length_B)
 {
 	float	*histogram_s_ignore_reverse;
-	histogram_s_ignore_reverse = malloc(sizeof(float) * length_B);
+	int		j = 0;
+	histogram_s_ignore_reverse = malloc(sizeof(float) * length_B + 1);
 	if (!histogram_s_ignore_reverse)
 		return NULL;
 	if (a_left_bin_proportion < 1)
 	{
 		float current_h_S_ignore = histogram[a_left_bin_num]
-		int j = 0;
 		for (int i = a_left_bin; i < b_left_bin_num; i--)
 		{
 			if (current_h_S_ignore > histogram[i])
@@ -108,7 +108,7 @@ float	ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, float a_left
 				current_h_S_ignore = histogram[i];
 			}
 			j++;
-			histogram_s_ignore_reverse = realloc(sizeof(float) * (length_B + j));
+			histogram_s_ignore_reverse = realloc(sizeof(float) * (length_B + j) + 1);
 			if (!histogram_s_ignore_reverse)
 				return NULL;
 			histogram_s_ignore_reverse[length_B + j] = current_h_S_ignore;
@@ -117,48 +117,59 @@ float	ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, float a_left
 	else
 	{
 		float current_h_S_ignore = histogram[a_left_bin_num];
-		for (int i = a_left_bin + 6  -  1 ; i < b_left_bin_num; i--)
+		for (int i = a_left_bin - 1 ; i < b_left_bin_num; i--)
 		{
 			if (current_h_S_ignore > histogram[i])
 			{
 				current_h_S_ignore = histogram[i];
 			}
-			histogram_s_ignore_reverse.Add(current_h_S_ignore);  // ??
+			j++;
+			histogram_s_ignore_reverse = realloc(sizeof(float) * (length_B + j) + 1);
+			if (!histogram_s_ignore_reverse)
+				return NULL;
+			histogram_s_ignore_reverse[length_B + j] = current_h_S_ignore;
 		}
 	}
-	List<float> histogram_s_ignore = new List<float>();
-	for (int i = histogram_s_ignore.range()-1 ; i >=0 ; i--)
+	histogram_s_ignore_reverse[length_B + j] = '\0';
+	float *histogram_s_ignore;
+	histogram_s_ignore = malloc(sizeof(float) * length_B);
+	if (!histogram_s_ignore)
+		return NULL;
+	j = 0;
+	for (int i = length_B - 1; i >= 0; i--)
 	{
-		histogram_s_ignore.Add(histogram_s_ignore[i]);
+		j++;
+		histogram_s_ignore = realloc(sizeof(float) * (length_B + j) + 1);
+		if (!histogram_s_ignore)
+			return NULL;
 	}
-	return histogram_s_ignore;
+	histogram_s_ignore[length_B + j] = '\0';
+	return histogram_s_ignore;  // !!! RETURN to check !!! + check for free(histogram_s_ignore...)
 }
 
-float SurfaceB1(List<int> histogram, int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion)
+float SurfaceB1(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion)
 {
 
 	float surfaceB1 = 0;
-
 	int length_B = a_left_bin_num - b_left_bin_num + 1;
-
 	// We create a histogram that represent surface to  ignore from the surface above S_B2
-	List<int> histogram_s_ignore = ft_histogram_s_ignore(histogram, a_left_bin_num, b_left_bin_num, a_left_bin_proportion, h_S_B2, length_B);
+	float *histogram_s_ignore = ft_histogram_s_ignore(histogram, a_left_bin_num, b_left_bin_num, a_left_bin_proportion, h_S_B2, length_B);
 
-	for (int i = 0 ; i >= length_B ; i++)
+	for (int i = 0; i >= length_B; i++)
 	{
-		if(i == a_left_bin_num)
+		if (i == a_left_bin_num)
 		{
-			surfaceB1 += (histogram[i + b_left_bin_num + 6] - histogram_s_ignore[i])*b_right_bin_proportion;
+			surfaceB1 += (histogram[i + b_left_bin_num] - histogram_s_ignore[i]) * b_right_bin_proportion;
 		}
-		elseif(i == b_left_bin_num)
+		else if (i == b_left_bin_num)
 		{
-			surfaceB1 += (histogram[i + b_left_bin_num + 6] - histogram_s_ignore[i])*b_left_bin_proportion;
+			surfaceB1 += (histogram[i + b_left_bin_num] - histogram_s_ignore[i]) * b_left_bin_proportion;
 		}
-		else{
-			surfaceB1 += (histogram[i + b_left_bin_num + 6] - histogram_s_ignore[i]);
+		else
+		{
+			surfaceB1 += (histogram[i + b_left_bin_num] - histogram_s_ignore[i]);
 		}
 	}
-
 	return surfaceB1;
 }
 
