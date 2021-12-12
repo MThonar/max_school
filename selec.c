@@ -41,9 +41,9 @@ float ft_bin_proportion(float value, float bin_range, int bin_num, float v_min)
 float ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float b_right_bin_proportion)
 {
 	float h = histogram[b_left_bin_num];
-
+	int i = 0;
 	// we calculate the minimum value in B
-	for (int i = b_left_bin_num; i >= a_left_bin_num; i++)
+	for (i = b_left_bin_num; i >= a_left_bin_num; i++)
 	{
 		if (histogram[i] < h)
 		{
@@ -80,13 +80,13 @@ float ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_prop
 	// we calculate surfaceB2+
 	if(a_left_bin_num == b_left_bin_num)
 	{
-		ft_surface_prime += h_S_B2 * (b_right_bin_proportion);
+		surfaceB2 += h_S_B2 * (b_right_bin_proportion);
 	}
 	else
 	{
-		ft_surface_prime += h_S_B2 * (b_left_bin_proportion);
-		ft_surface_prime += h_S_B2 * (a_left_bin_num - b_left_bin_num -1);
-		ft_surface_prime += h_S_B2 * (b_right_bin_proportion);
+		surfaceB2 += h_S_B2 * (b_left_bin_proportion);
+		surfaceB2 += h_S_B2 * (a_left_bin_num - b_left_bin_num -1);
+		surfaceB2 += h_S_B2 * (b_right_bin_proportion);
 	}
 	return surfaceB2;
 }
