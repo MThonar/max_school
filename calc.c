@@ -156,6 +156,6 @@ int	main(void)
 		printf("\nbucket2[%d] -> %.1f",i , bucket2[i]);
 		i++;
 	}
+	printf("\n");
 	return (0);
-
 }
