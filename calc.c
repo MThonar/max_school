@@ -144,8 +144,18 @@ int	main(void)
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, range_length);
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, range_length);
 
-	printf("\nbucket 1 -> %.1f, %.1f, %.1f, %.1f, %.1f\n\n", bucket1[0], bucket1[1], bucket1[2], bucket1[3], bucket1[4]);
-	printf("bucket 2 -> %.1f, %.1f, %.1f, %.1f, %.1f\n\n", bucket2[0], bucket2[1], bucket2[2], bucket2[3], bucket2[4]);
+	while (i < statistic_target)
+	{
+		printf("\nbucket1[%d] -> %.1f",i , bucket1[i]);
+		i++;
+	}
+	printf("\n");
+	i = 0;
+	while (i < statistic_target)
+	{
+		printf("\nbucket2[%d] -> %.1f",i , bucket2[i]);
+		i++;
+	}
 	return (0);
 
 }
