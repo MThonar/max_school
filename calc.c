@@ -128,12 +128,9 @@ int	main(void)
 	float *bucket2;
 	int i = 0;
 	int *range_length = ft_range_length();
-	int sauce;
 
-	sauce = ft_array_length(array_lower1);
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, range_length);
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, range_length);
-
 	while (i < statistic_target)
 	{
 		printf("\nbucket1[%d] -> %.1f",i , bucket1[i]);
