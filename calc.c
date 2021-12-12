@@ -104,7 +104,8 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 	{
 		for(j = 0; j < ft_array_length(array_upperx); j++)
 		{
-			printf("lower_bucket_bound = %d")
+			printf("\nlower_bucket_bound = %d, array_lowerx[j] = %d, upper_bucket_bound = %d, array_upperx[j] = %d\n",
+			lower_bucket_bound, array_lowerx[j], upper_bucket_bound, array_upperx[j]);
 			if((array_lowerx[j] > lower_bucket_bound) && (array_lowerx[j] < upper_bucket_bound))
 			{
 				increment = (upper_bucket_bound - array_lowerx[j]) / bucket_length;
