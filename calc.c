@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #define ARRAY_LENGTH 5
 
-int array_lower1[ARRAY_LENGTH] = {3, 0, 7, 3, 10};
-int array_upper1[ARRAY_LENGTH] = {7, 5, 11, 5, 14};
-int array_lower_tri1[ARRAY_LENGTH] = {0, 3, 3, 7, 10};
-int array_upper_tri1[ARRAY_LENGTH] = {5, 5, 7, 11, 14};
+int array_lower1[ARRAY_LENGTH] = {1, 2, 4, 9, 10};
+int array_upper1[ARRAY_LENGTH] = {5, 7, 12, 13, 15};
+int array_lower_tri1[ARRAY_LENGTH] = {1, 2, 4, 9, 10};
+int array_upper_tri1[ARRAY_LENGTH] = {5, 7, 12, 13, 15};
 
 int array_lower2[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper2[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
@@ -13,22 +13,6 @@ int array_lower_tri2[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper_tri2[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
 
 int statistic_target = 7; 		//nombre de buckets
-
-int		*ft_range_length()
-{
-	int		length;
-	int		i;
-	int		*range_lengths;
-
-	length = sizeof(array_lower1)/sizeof(array_lower1[0]);
-	range_lengths = malloc(sizeof(int) * length);
-	if (!range_lengths)
-		return NULL;
-	i = -1;
-	while (i++ < length)
-		range_lengths[i] = array_upper1[i] - array_lower1[i];
-	return (range_lengths);
-}
 
 int		*ft_hist_length()
 {
@@ -69,7 +53,7 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 	int		hist_lowest_bound;
 	int		lower_bucket_bound;
 	int		upper_bucket_bound;
-    int     array_length;
+	int		array_length;
 	float	bucket_length;
 	float	*buckets;
 	float	increment;
@@ -79,8 +63,7 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 	hist_lowest_bound = ft_hist_length()[1];
 	lower_bucket_bound = hist_lowest_bound;
 	upper_bucket_bound = lower_bucket_bound + bucket_length;
-    array_length = sizeof(array_upper1)/sizeof(array_upper1[0]);
-
+	array_length = sizeof(array_upper1)/sizeof(array_upper1[0]);
 
 	buckets = malloc(sizeof(float) * statistic_target + 1);
 	if (!buckets)
@@ -127,6 +110,7 @@ int	main(void)
 		i++;
 	}
 	printf("\n");
+	free (bucket1);
 	i = 0;
 	while (i < statistic_target)
 	{
@@ -134,5 +118,6 @@ int	main(void)
 		i++;
 	}
 	printf("\n");
+	free (bucket2);
 	return (0);
 }

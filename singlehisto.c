@@ -7,21 +7,7 @@ int array_upper[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
 int array_lower_tri[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper_tri[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
 
-int statistic_target = 6; 		//nombre de buckets
-
-int		*ft_range_length()
-{
-	int		i;
-	int		*range_lengths;
-
-	range_lengths = malloc(sizeof(int) * ARRAY_LENGTH);
-	if (!range_lengths)
-		return NULL;
-	i = -1;
-	while (i++ < ARRAY_LENGTH)
-		range_lengths[i] = array_upper[i] - array_lower[i];
-	return (range_lengths);
-}
+int statistic_target = 6; 		//nombre de bucket
 
 float	*ft_equiwidth_freq(int *array_lower, int *array_upper)
 {
@@ -32,7 +18,7 @@ float	*ft_equiwidth_freq(int *array_lower, int *array_upper)
 	int		lower_bucket_bound;
 	int		upper_bucket_bound;
 	float	bucket_length;
-	float	*buckets;
+	float	*bucket;
 	float	increment;
 
 	hist_length = array_upper_tri[ARRAY_LENGTH - 1] - array_lower_tri[0];
@@ -41,10 +27,10 @@ float	*ft_equiwidth_freq(int *array_lower, int *array_upper)
 	lower_bucket_bound = lowest_bound;
 	upper_bucket_bound = lower_bucket_bound + bucket_length;
 
-	buckets = malloc(sizeof(float) * statistic_target + 1);
-	if (!buckets)
+	bucket = malloc(sizeof(float) * statistic_target + 1);
+	if (!bucket)
 		return NULL;
-	buckets[statistic_target + 1] = '\0';
+	bucket[statistic_target + 1] = '\0';
 
 	for (i = 0; i < statistic_target; i++)
 	{
@@ -54,22 +40,22 @@ float	*ft_equiwidth_freq(int *array_lower, int *array_upper)
 			if((array_lower[j] > lower_bucket_bound) && (array_lower[j] < upper_bucket_bound))
 			{
 				increment = (upper_bucket_bound - array_lower[j]) / bucket_length;
-				buckets[i] += increment;
+				bucket[i] += increment;
 			}
 			else if((array_lower[j] <= lower_bucket_bound) && (array_upper[j] >= upper_bucket_bound))
 			{
-				buckets[i] += 1 ;
+				bucket[i] += 1 ;
 			}
 			else if((array_upper[j] < upper_bucket_bound) && (array_upper[j] > lower_bucket_bound))
 			{
 				increment = (array_upper[j] - lower_bucket_bound) / bucket_length;
-				buckets[i] += increment ;
+				bucket[i] += increment ;
 			}
 		}
 		lower_bucket_bound = upper_bucket_bound;
 		upper_bucket_bound += bucket_length;
 	}
-	return (buckets);
+	return (bucket);
 }
 
 int	main(void)
@@ -84,5 +70,6 @@ int	main(void)
 		i++;
 	}
 	printf("\n");
+	free (bucket);
 	return (0);
 }
