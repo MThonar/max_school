@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int array_lower1[5] = {1, 2, 4, 9, 10};
-int array_upper1[5] = {5, 7, 12, 13, 15};
-int array_lower_tri1[5] = {1, 2, 4, 9, 10};
-int array_upper_tri1[5] = {5, 7, 12, 13, 15};
+int array_lower1[5] = {3, 0, 7, 3, 10};
+int array_upper1[5] = {7, 5, 11, 5, 14};
+int array_lower_tri1[5] = {0, 3, 3, 7, 10};
+int array_upper_tri1[5] = {5, 5, 7, 11, 14};
 
-int array_lower2[5] = {0, 2, 7, 19, 22};
-int array_upper2[5] = {9, 14, 15, 27, 30};
-int array_lower_tri2[5] = {0, 2, 7, 19, 22};
-int array_upper_tri2[5] = {9, 14, 15, 27, 30};
+int array_lower2[5] = {11, 9, 3, 12, 0};
+int array_upper2[5] = {17, 15, 7, 14, 8};
+int array_lower_tri2[5] = {0, 3, 9, 11, 12};
+int array_upper_tri2[5] = {7, 8, 14, 15, 17};
 
 int statistic_target = 7; 		//nombre de buckets
 
@@ -56,10 +56,7 @@ int		*ft_hist_length()
 	return_array[2] = '\0';
 	array_length = ft_array_length(array_upper_tri1);
 	first_length = array_upper_tri1[array_length - 1] - array_lower_tri1[0];
-	printf("\narray_upper_tri1[array_length - 1] : %d\n", array_upper_tri1[array_length - 1]);
 	second_length = array_upper_tri2[array_length - 1] - array_lower_tri2[0];
-	printf("\nfirst_length : %d\n", first_length);
-	printf("\nsecond_length : %d\n", second_length);
 	if (first_length <= second_length)
 	{
 		min_hist_length = first_length;
@@ -70,7 +67,6 @@ int		*ft_hist_length()
 		min_hist_length = second_length;
 		hist_lower_bound = array_lower_tri2[0];
 	}
-	printf("\nhist_length : %d\n", min_hist_length);
 	return_array[0] = min_hist_length;
 	return_array[1] = hist_lower_bound;
 	return (return_array);
@@ -90,7 +86,6 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 
 	min_hist_length = ft_hist_length()[0];
 	bucket_length = min_hist_length / statistic_target;
-	printf("\nbucket_length : %.1f\n", bucket_length);
 	hist_lowest_bound = ft_hist_length()[1];
 	lower_bucket_bound = hist_lowest_bound;
 	upper_bucket_bound = lower_bucket_bound + bucket_length;
@@ -104,27 +99,22 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 	{
 		for(j = 0; j < ft_array_length(array_upperx); j++)
 		{
-			printf("\nlower_bucket_bound = %d, array_lowerx[j] = %d, upper_bucket_bound = %d, array_upperx[j] = %d\n",
-			lower_bucket_bound, array_lowerx[j], upper_bucket_bound, array_upperx[j]);
+
 			if((array_lowerx[j] > lower_bucket_bound) && (array_lowerx[j] < upper_bucket_bound))
 			{
 				increment = (upper_bucket_bound - array_lowerx[j]) / bucket_length;
 				buckets[i] += increment;
-				printf("\n1st if: i = %d, j = %d, increment = %.1f\n", i, j, increment);
 			}
 			else if((array_lowerx[j] <= lower_bucket_bound) && (array_upperx[j] >= upper_bucket_bound))
 			{
 				buckets[i] += 1 ;
-				printf("\n2nd if: i = %d, j = %d, increment = 1\n", i, j);
 			}
 			else if((array_upperx[j] < upper_bucket_bound) && (array_upperx[j] > lower_bucket_bound))
 			{
 				increment = (array_upperx[j] - lower_bucket_bound) / bucket_length;
 				buckets[i] += increment ;
-				printf("\n3rd if: i = %d, j = %d, increment = %.1f\n", i, j, increment);
 			}
-			else
-				printf("i = %d, j = %d, on ne fait rien\n", i, j);
+			// else -> nothing happens
 		}
 		lower_bucket_bound = upper_bucket_bound;
 		upper_bucket_bound += bucket_length;
@@ -141,7 +131,6 @@ int	main(void)
 	int sauce;
 
 	sauce = ft_array_length(array_lower1);
-	printf ("------> %d <-------", sauce);
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, range_length);
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, range_length);
 
@@ -158,5 +147,8 @@ int	main(void)
 		i++;
 	}
 	printf("\n");
+	free (bucket1);
+	free (bucket2);
+	free (range_length);
 	return (0);
 }
