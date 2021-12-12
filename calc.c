@@ -104,26 +104,26 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 	{
 		for(j = 0; j < ft_array_length(array_upperx); j++)
 		{
+			printf("lower_bucket_bound = %d")
 			if((array_lowerx[j] > lower_bucket_bound) && (array_lowerx[j] < upper_bucket_bound))
 			{
 				increment = (upper_bucket_bound - array_lowerx[j]) / bucket_length;
 				buckets[i] += increment;
-				printf("\ni = %d, j = %d, increment = %.1f\nupper_bucket_bound = %d, array_lowerx = %d\n",
-				 i, j, increment, upper_bucket_bound, array_lowerx[j]);
+				printf("\n1st if: i = %d, j = %d, increment = %.1f\n", i, j, increment);
 			}
 			else if((array_lowerx[j] <= lower_bucket_bound) && (array_upperx[j] >= upper_bucket_bound))
 			{
 				buckets[i] += 1 ;
-				printf("\ni = %d, j = %d, increment = 1\n", i, j);
+				printf("\n2nd if: i = %d, j = %d, increment = 1\n", i, j);
 			}
 			else if((array_upperx[j] < upper_bucket_bound) && (array_upperx[j] > lower_bucket_bound))
 			{
 				increment = (array_upperx[j] - lower_bucket_bound) / bucket_length;
 				buckets[i] += increment ;
-				printf("\ni = %d, j = %d, increment = %.1f\n", i, j, increment);
+				printf("\n3rd if: i = %d, j = %d, increment = %.1f\n", i, j, increment);
 			}
 			else
-				printf("on ne fait rien\n");
+				printf("i = %d, j = %d, on ne fait rien\n", i, j);
 		}
 		lower_bucket_bound = upper_bucket_bound;
 		upper_bucket_bound += bucket_length;
