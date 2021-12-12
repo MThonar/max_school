@@ -1,13 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int array_lower[5] = {3, 0, 7, 3, 10};
-int array_upper[5] = {7, 5, 11, 5, 14};
-int array_lower_tri[5] = {0, 3, 3, 7, 10};
-int array_upper_tri[5] = {5, 5, 7, 11, 14};
-
-int statistic_target = 7; 		//nombre de buckets
-
 int		ft_array_length(int *arr)
 {
 	int i;
@@ -98,9 +91,14 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 
 int	main(void)
 {
-	float *bucket;
-	int i = 0;
-	int *range_length = ft_range_length();
+	int		array_lower[5] = {3, 0, 7, 3, 10};
+	int		array_upper[5] = {7, 5, 11, 5, 14};
+	int		array_lower_tri[5] = {0, 3, 3, 7, 10};
+	int		array_upper_tri[5] = {5, 5, 7, 11, 14};
+	int		statistic_target = 7; 		//nombre de buckets
+	float	*bucket;
+	int		i = 0;
+	int		*range_length = ft_range_length();
 
 	bucket = ft_equiwidth_freq(array_lower, array_upper, range_length);
 	while (i < statistic_target)
