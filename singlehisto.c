@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #define ARRAY_LENGTH 5
 
-int array_lower[ARRAY_LENGTH] = {1, 2, 4, 9, 10};
-int array_upper[ARRAY_LENGTH] = {5, 7, 12, 13, 15};
-int array_lower_tri[ARRAY_LENGTH] = {1, 2, 4, 9, 10};
-int array_upper_tri[ARRAY_LENGTH] = {5, 7, 12, 13, 15};
+int array_lower[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
+int array_lower_tri[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper_tri[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
 
-int statistic_target = 7; 		//nombre de buckets
+int statistic_target = 6; 		//nombre de buckets
 
 int		*ft_range_length()
 {

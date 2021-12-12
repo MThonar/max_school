@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define ARRAY_LENGTH 5
 
-int array_lower1[5] = {1, 2, 4, 9, 10};
-int array_upper1[5] = {5, 7, 12, 13, 15};
-int array_lower_tri1[5] = {1, 2, 4, 9, 10};
-int array_upper_tri1[5] = {5, 7, 12, 13, 15};
+int array_lower1[ARRAY_LENGTH] = {};
+int array_upper1[ARRAY_LENGTH] = {};
+int array_lower_tri1[ARRAY_LENGTH] = {};
+int array_upper_tri1[ARRAY_LENGTH] = {};
 
-int array_lower2[5] = {0, 2, 7, 19, 22};
-int array_upper2[5] = {9, 14, 15, 27, 30};
-int array_lower_tri2[5] = {0, 2, 7, 19, 22};
-int array_upper_tri2[5] = {9, 14, 15, 27, 30};
+int array_lower2[ARRAY_LENGTH] = {};
+int array_upper2[ARRAY_LENGTH] = {};
+int array_lower_tri2[ARRAY_LENGTH] = {};
+int array_upper_tri2[ARRAY_LENGTH] = {};
 
 int statistic_target = 7; 		//nombre de buckets
 
