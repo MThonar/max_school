@@ -17,9 +17,7 @@ int		*ft_range_length()
 {
 	int		length;
 	int		i;
-	int		j;
 	int		*range_lengths;
-	float	*buckets;
 
 	length = sizeof(array_lower1)/sizeof(array_lower1[0]);
 	range_lengths = malloc(sizeof(int) * length);
@@ -62,7 +60,7 @@ int		*ft_hist_length()
 	return (return_array);
 }
 
-float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length)
+float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 {
 	int		i;
 	int		j;
@@ -81,7 +79,7 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx, int *range_length
 	lower_bucket_bound = hist_lowest_bound;
 	upper_bucket_bound = lower_bucket_bound + bucket_length;
     array_length = sizeof(array_upper1)/sizeof(array_upper1[0]);
-    
+
 
 	buckets = malloc(sizeof(float) * statistic_target + 1);
 	if (!buckets)
@@ -119,9 +117,8 @@ int	main(void)
 	float *bucket1;
 	float *bucket2;
 	int i = 0;
-	int *range_length = ft_range_length();
-	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, range_length);
-	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, range_length);
+	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1);
+	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2);
 
 	while (i < statistic_target)
 	{
