@@ -113,7 +113,7 @@ float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_prop
 	return surfaceB2;
 }
 
-float	selectivity_stricly_left() // add average_range in parameters
+float	selectivity_stricly_left()
 {
 	int	a_min = a[0];
 	float	v_min = histogram[0];
@@ -134,7 +134,7 @@ float	selectivity_stricly_left() // add average_range in parameters
 		int a_left_bin_num = ft_num_bin(a_min, bin_range, v_min);
 
 		// we calculate the number of the b_left bin
-		float b_min = a_min - averrage_range;
+		float b_min = a_min - average_range;
 		int b_left_bin_num = ft_num_bin(b_min, bin_range, v_min);
 
 		// we calculate the proportion that A overlaps a_left_bin
@@ -150,7 +150,7 @@ float	selectivity_stricly_left() // add average_range in parameters
 		// We create the variables that will store the area of each zone
 
 		float surface_prime = ft_surface_prime(b_left_bin_num, b_left_bin_proportion);
-		float surfaceB1 = ft_surfaceB1(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion, h_S_B2);
+		float surfaceB1 = ft_surfaceB1(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion);
 		float surfaceB2 = ft_surfaceB2(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion, h_S_B2);
 
 		// We proceed to the calculation of the selectivity

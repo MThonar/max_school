@@ -76,7 +76,7 @@ float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_
 	float surface_A = 0;
 	// we calculate surface_A
 	for (int i = a_left_bin_num + 1; i >= a_right_bin_num; i++)
-		surface_prime += histogram[i+5];
+		surface_A += histogram[i+5];
 	surface_A += histogram[a_left_bin_num+5] * a_left_bin_proportion;
 	surface_A += histogram[a_right_bin_num+5] * a_right_bin_proportion;
 	return surface_A;
@@ -142,16 +142,16 @@ float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_p
 	float surfaceC1 = 0;
 	int length_C = c_right_bin_num - a_right_bin_num + 1;
 	// We create a histogram that represent surface to  ignore from the surface above S_C2
-	float *histogram_s_C_ignore = ft_histogram_s_C_ignore(a_right_bin_num, c_right_bin_num, length_B);
+	float *histogram_s_C_ignore = ft_histogram_s_C_ignore(a_right_bin_num, c_right_bin_num, length_C);
 
-	for (int i = 0; i >= length_B; i++)
+	for (int i = 0; i >= length_C; i++)
 	{
 		if (i == a_right_bin_num)
-			surfaceB1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]) * c_left_bin_proportion;
+			surfaceC1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]) * c_left_bin_proportion;
 		else if (i == c_right_bin_num)
-			surfaceB1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]) * c_right_bin_proportion;
+			surfaceC1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]) * c_right_bin_proportion;
 		else
-			surfaceB1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]);
+			surfaceC1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]);
 	}
 	return surfaceC1;
 }
@@ -177,12 +177,12 @@ float	ft_surfaceC2(int a_right_bin_num, int c_right_bin_num, float c_left_bin_pr
 	float surfaceB2 = 0;
 
 	// we calculate surfaceB2+
-	if(a_right_bin_num == b_right_bin_num)
+	if(a_right_bin_num == c_right_bin_num)
 		surfaceB2 += h_S_B2 * (c_left_bin_proportion);
 	else
 	{
 		surfaceB2 += h_S_B2 * (c_left_bin_proportion);
-		surfaceB2 += h_S_B2 * (a_left_bin_num - b_left_bin_num -1);
+		surfaceB2 += h_S_B2 * (c_right_bin_num - a_right_bin_num -1);
 		surfaceB2 += h_S_B2 * (c_right_bin_proportion);
 	}
 	return surfaceB2;
@@ -213,11 +213,11 @@ float	selectivity_overlaps() // add average_range in parameters
 		int a_right_bin_num = ft_num_bin(a_max, bin_range, v_min, v_max);
 
 		// we calculate the number of the b_left bin
-		float b_min = a_min - averrage_range;
+		float b_min = a_min - average_range;
 		int b_left_bin_num = ft_num_bin(b_min, bin_range, v_min, v_max);
 
 		// we calculate the number of the c_right bin
-		float c_max = a_max + averrage_range;
+		float c_max = a_max + average_range;
 		int c_right_bin_num = ft_num_bin(c_max, bin_range, v_min, v_max);
 
 		// we calculate the proportion that A overlaps a_left_bin
