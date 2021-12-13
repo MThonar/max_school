@@ -111,6 +111,7 @@ float multiplication(float* bucket1, float* bucket2)
 		lower_bucket_bound1 = upper_bucket_bound1;
 		upper_bucket_bound1 += bucket_length1;
 	}
+	printf("\nfirst estimation = %f\n", resultat);
 	return (resultat);
 }
 
@@ -122,6 +123,7 @@ float moyenne(float* bucket){
 		moyenne += bucket[i];
 		}
 	moyenne = moyenne / ARRAY_LENGTH;
+	printf("\nmoyenne = %f\n", moyenne);
 	return (moyenne);
 	}
 
@@ -133,18 +135,11 @@ int	main(void)
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, array_lower_tri2, array_upper_tri2);
 	float resultat;
 	resultat = multiplication(bucket1,bucket2);
-	printf("resultat = %f\n", resultat); 
-
 	float moyenne1 = moyenne(bucket1);
-	printf("moyenne1 = %f\n", moyenne1); 
-
 	float moyenne2 = moyenne(bucket2);
-	printf("moyenne2 = %f\n", moyenne2);
-	
-
 	float resultat_nouveau;
 	resultat_nouveau = (resultat / (moyenne1*moyenne2));
-	printf("resultat2 = %f\n", resultat_nouveau);
+	printf("\nresultat2 = %f\n", resultat_nouveau);
 
 	/*float estimation = estimation_cardinality_join(bucket1,bucket2);
 	printf("join cardinality estimation = %f\n", estimation );*/

@@ -3,10 +3,11 @@
 #define LENGTH 12
 
 int		a[2] = {5, 10};
-float	histogram[LENGTH] = {0, 30, 40, 5, 9, 1.6, 2.4, 1.8, 0.2, 1.4, 2};
+float	histogram[LENGTH] = {0, 30, 7.5, 6, 9, 1.67, 2.33, 0.83, 1.17, 1.5};
+// ranges = ( (0, 14), (2, 9), (7, 15), (19, 27), (22, 30) )
 // histogram[0] = 0;		v_min
 // histogram[1] = 30;		v_max
-// histogram[2] = 40;		surface_tot
+// histogram[2] = 45;		surface_tot
 // histogram[3] = 5;		bin_range
 // histogram[4] = 9;		average_range
 // histogram[5-10] = upp;	donnees singlehisto.c
@@ -15,10 +16,12 @@ int	ft_num_bin(float value, float bin_range, float v_min, float v_max)
 {
 	int i = 0;
 	int num_bin = 0;
-	printf("\n%d, %f, %d, %f\n", (i*bin_range), value-v_min, (i*bin_range), v_max-v_min);
-	for (int i = 0; (i * bin_range > value - v_min) && (i * bin_range >= v_max - v_min); i++)
+	float res1 = i*bin_range;
+	float res2 = value-v_min;
+	float res3 = v_max-v_min;
+	
+	for (int i = 0; (i * bin_range < value - v_min) && (i * bin_range < v_max - v_min); i++)
 	{
-		printf("\nGROSSEPROUTE\n");
 		num_bin++;
 	}
 	printf("num_bin = %d", num_bin);
@@ -44,8 +47,7 @@ float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_n
 	float h = histogram[b_left_bin_num+5];
 	int i = 0;
 	// we calculate the minimum value in B
-	printf("\na_left_bin_num = %d\n", a_left_bin_num);
-	for (i = b_left_bin_num; i >= a_left_bin_num; i++)
+	for (i = b_left_bin_num; i < a_left_bin_num; i++)
 	{
 		//printf("\nREPROUTE (valeur de i = %d)\n", i);
 		if (histogram[i+5] < h)
@@ -62,11 +64,10 @@ float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_n
 
 float	ft_H_SC2(int a_right_bin_num, float a_right_bin_proportion, int c_right_bin_num)
 {
-	printf("\nc_right_bin_num = %d\n", c_right_bin_num);
 	float h = histogram[c_right_bin_num+5];
 	int i = 0;
 	// we calculate the minimum value in C
-	for (i = c_right_bin_num; i <= a_right_bin_num; i--)
+	for (i = c_right_bin_num; i > a_right_bin_num; i--)
 	{
 		if (histogram[i+5] < h)
 			h = histogram[i+5];
@@ -84,7 +85,7 @@ float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_
 {
 	float surface_A = 0;
 	// we calculate surface_A
-	for (int i = a_left_bin_num + 1; i >= a_right_bin_num; i++)
+	for (int i = a_left_bin_num + 1; i < a_right_bin_num; i++)
 		surface_A += histogram[i+5];
 	surface_A += histogram[a_left_bin_num+5] * a_left_bin_proportion;
 	surface_A += histogram[a_right_bin_num+5] * a_right_bin_proportion;
@@ -98,7 +99,7 @@ float	*ft_histogram_s_B_ignore(int a_left_bin_num, int b_left_bin_num, int lengt
 	if (!histogram_s_B_ignore)
 		return NULL;
 	float current_h_S_B_ignore = histogram[b_left_bin_num+5];
-	for (int i = b_left_bin_num; i > a_left_bin_num; i++)
+	for (int i = b_left_bin_num; i <= a_left_bin_num; i++)
 	{
 		if (current_h_S_B_ignore > histogram[i+5])
 			current_h_S_B_ignore = histogram[i+5];
@@ -115,7 +116,7 @@ float	*ft_histogram_s_C_ignore(int a_right_bin_num, int c_right_bin_num, int len
 	if (!histogram_s_C_ignore)
 		return NULL;
 	float current_h_S_C_ignore = histogram[c_right_bin_num+5];
-	for (int i = c_right_bin_num; i < a_right_bin_num; i--)
+	for (int i = c_right_bin_num; i >= a_right_bin_num; i--)
 	{
 		if (current_h_S_C_ignore > histogram[i+5])
 			current_h_S_C_ignore = histogram[i+5];
@@ -133,7 +134,7 @@ float	ft_surfaceB1(int a_left_bin_num  , int b_left_bin_num , float b_left_bin_p
 	// We create a histogram that represent surface to  ignore from the surface above S_B2
 	float *histogram_s_B_ignore = ft_histogram_s_B_ignore(a_left_bin_num, b_left_bin_num, length_B);
 
-	for (int i = 0; i >= length_B; i++)
+	for (int i = 0; i < length_B; i++)
 	{
 		if (i == length_B - 1)
 			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_B_ignore[i]) * b_right_bin_proportion;
@@ -153,7 +154,7 @@ float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_p
 	// We create a histogram that represent surface to  ignore from the surface above S_C2
 	float *histogram_s_C_ignore = ft_histogram_s_C_ignore(a_right_bin_num, c_right_bin_num, length_C);
 
-	for (int i = 0; i >= length_C; i++)
+	for (int i = 0; i < length_C; i++)
 	{
 		if (i == a_right_bin_num)
 			surfaceC1 += (histogram[i + c_right_bin_num] - histogram_s_C_ignore[i]) * c_left_bin_proportion;
