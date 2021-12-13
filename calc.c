@@ -96,28 +96,39 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 	return (buckets);
 }
 
-int	main(void)
-{
-	float *bucket1;
-	float *bucket2;
-	int i = 0;
-	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1);
-	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2);
+float estimation_cardinality_join(float* bucket1, float* bucket2){
 
-	while (i < statistic_target)
-	{
-		printf("\nbucket1[%d] -> %.1f",i , bucket1[i]);
-		i++;
-	}
-	printf("\n");
-	free (bucket1);
-	i = 0;
-	while (i < statistic_target)
-	{
-		printf("\nbucket2[%d] -> %.1f",i , bucket2[i]);
-		i++;
-	}
-	printf("\n");
-	free (bucket2);
-	return (0);
+
+    float *list_join;
+    list_join = malloc(sizeof(float) * statistic_target+1 );
+    list_join[statistic_target + 1] = '\0';
+
+
+    int i;
+    for (i=0; i < statistic_target ; i++){
+        list_join[i] = bucket1[i] * bucket2[i];
+    }
+
+    float estimation;
+    for(i=0; i < statistic_target; i++){
+        estimation += list_join[i] ;
+    }
+    return (estimation);
+
+}
+
+int    main(void)
+{
+    float *bucket1;
+    float *bucket2;
+    bucket1 = ft_equiwidth_freq(array_lower1, array_upper1);
+    bucket2 = ft_equiwidth_freq(array_lower2, array_upper2);
+
+
+    float estimation = estimation_cardinality_join(bucket1,bucket2);
+    printf("join cardinality estimation = %f\n", estimation );
+    free (bucket1);
+
+    free (bucket2);
+    return (0);
 }
