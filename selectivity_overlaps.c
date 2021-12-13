@@ -24,7 +24,7 @@ float	ft_bin_proportion(float value, float bin_range, int bin_num, float v_min)
 	// range in bin number bin_num that is not overlapsed
 	float range = value - (bin_num * bin_range + v_min);
 	float bin_proportion;
-	if (range =< 0)
+	if (range <= 0)
 		bin_proportion = 1;
 	if (range >= bin_range)
 		bin_proportion = 1;
@@ -71,7 +71,7 @@ float	ft_H_SC2(int a_right_bin_num, float a_right_bin_proportion, int c_right_bi
 	return h;
 }
 
-float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_bin_num, float a_right_bin_proportion)
+float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_bin_num, float a_right_bin_proportion) //surface_prime not initialized
 {
 	float surface_A = 0;
 	// we calculate surface_A
@@ -136,7 +136,7 @@ float	ft_surfaceB1(int a_left_bin_num  , int b_left_bin_num , float b_left_bin_p
 	return surfaceB1;
 }
 
-float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_proportion, float c_left_bin_proportion)
+float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_proportion, float c_left_bin_proportion) //add length_B in parameters
 {
 
 	float surfaceC1 = 0;
@@ -156,7 +156,7 @@ float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_p
 	return surfaceC1;
 }
 
-float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion, int h_S_B2)
+float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion, int h_S_B2) //add parameters
 {
 	float surfaceB2 = 0;
 
@@ -224,7 +224,7 @@ float	selectivity_overlaps() // add average_range in parameters
 		float a_left_bin_proportion = ft_bin_proportion(a_min, bin_range, a_left_bin_num, v_min);
 
 		// we calculate the proportion that A overlaps a_right_bin
-		float a_right_bin_proportion = ft_bin_proportion(a_max, bin_range, a_right_bin_num, v_min)
+		float a_right_bin_proportion = ft_bin_proportion(a_max, bin_range, a_right_bin_num, v_min);
 
 		// we calculate the proportion that B overlaps b_left_bin and b_right_bin (who is also a_left_bin)
 		float b_left_bin_proportion = ft_bin_proportion(b_min, bin_range, b_left_bin_num, v_min);
