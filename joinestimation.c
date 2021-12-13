@@ -60,7 +60,6 @@ float	*ft_equiwidth_freq(int *array_lower, int *array_upper, int *array_lower_tr
 				bucket[i] += increment ;
 			}
 		}
-		printf("\nbucket[%d] = %f\n", i, bucket[i]);
 		lower_bucket_bound = upper_bucket_bound;
 		upper_bucket_bound += bucket_length;
 	}
@@ -111,38 +110,48 @@ float multiplication(float* bucket1, float* bucket2)
 		lower_bucket_bound1 = upper_bucket_bound1;
 		upper_bucket_bound1 += bucket_length1;
 	}
-	printf("\nfirst estimation = %f\n", resultat);
+	//printf("\nfirst estimation = %f\n", resultat);
 	return (resultat);
 }
 
-float moyenne(float* bucket){
-	
-	float moyenne;
+float moyenne(float* bucket)
+{	
+	float moyenne = 0;
 	int i;
 	for (i = 0; i < statistic_target; i++){
+		//printf("\nmoyenne = %f\n", moyenne);
 		moyenne += bucket[i];
 		}
 	moyenne = moyenne / ARRAY_LENGTH;
-	printf("\nmoyenne = %f\n", moyenne);
+	//printf("\nmoyenneFINALE = %f\n", moyenne);
 	return (moyenne);
 	}
 
 int	main(void)
 {
+	int	i;
 	float *bucket1;
 	float *bucket2;
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, array_lower_tri1, array_upper_tri1);
+	printf("bucket1 = ( ");
+	for(i = 0; i < statistic_target; i++)
+		printf("%f ", bucket1[i]);
+	printf(")\n");
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, array_lower_tri2, array_upper_tri2);
+	printf("bucket2 = ( ");
+	for(i = 0; i < statistic_target; i++)
+		printf("%f ", bucket2[i]);
+	printf(")\n");
 	float resultat;
 	resultat = multiplication(bucket1,bucket2);
+	printf("First estimation = %f\n", resultat);
 	float moyenne1 = moyenne(bucket1);
+	printf("First table average = %f\n", moyenne1);
 	float moyenne2 = moyenne(bucket2);
+	printf("Second table average = %f\n", moyenne2);
 	float resultat_nouveau;
 	resultat_nouveau = (resultat / (moyenne1*moyenne2));
-	printf("\nresultat2 = %f\n", resultat_nouveau);
-
-	/*float estimation = estimation_cardinality_join(bucket1,bucket2);
-	printf("join cardinality estimation = %f\n", estimation );*/
+	printf("Final estimation = %f\n", resultat_nouveau);
 	free (bucket1);
 
 	free (bucket2);
