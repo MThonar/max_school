@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #define LENGTH 12
 
-int		a[2] = {5, 8};
-float	histogram[LENGTH] = {0, 30, 40, 5, 9, 1.6, 2.4, 1.8, 0.2, 1.4};
+int		a[2] = {5, 10};
+float	histogram[LENGTH] = {0, 30, 40, 5, 9, 1.6, 2.4, 1.8, 0.2, 1.4, 2};
 // histogram[0] = 0;		v_min
 // histogram[1] = 30;		v_max
 // histogram[2] = 40;		surface_tot
@@ -13,9 +13,15 @@ float	histogram[LENGTH] = {0, 30, 40, 5, 9, 1.6, 2.4, 1.8, 0.2, 1.4};
 
 int	ft_num_bin(float value, float bin_range, float v_min, float v_max)
 {
+	int i = 0;
 	int num_bin = 0;
-	for (int i = 0; i * bin_range >= value - v_min && i * bin_range >= v_max - v_min; i++)
-		num_bin = i;
+	printf("\n%d, %f, %d, %f\n", (i*bin_range), value-v_min, (i*bin_range), v_max-v_min);
+	for (int i = 0; (i * bin_range > value - v_min) && (i * bin_range >= v_max - v_min); i++)
+	{
+		printf("\nGROSSEPROUTE\n");
+		num_bin++;
+	}
+	printf("num_bin = %d", num_bin);
 	return num_bin;
 }
 
@@ -38,8 +44,10 @@ float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_n
 	float h = histogram[b_left_bin_num+5];
 	int i = 0;
 	// we calculate the minimum value in B
+	printf("\na_left_bin_num = %d\n", a_left_bin_num);
 	for (i = b_left_bin_num; i >= a_left_bin_num; i++)
 	{
+		//printf("\nREPROUTE (valeur de i = %d)\n", i);
 		if (histogram[i+5] < h)
 			h = histogram[i+5];
 	}
@@ -54,6 +62,7 @@ float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_n
 
 float	ft_H_SC2(int a_right_bin_num, float a_right_bin_proportion, int c_right_bin_num)
 {
+	printf("\nc_right_bin_num = %d\n", c_right_bin_num);
 	float h = histogram[c_right_bin_num+5];
 	int i = 0;
 	// we calculate the minimum value in C
@@ -156,7 +165,7 @@ float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_p
 	return surfaceC1;
 }
 
-float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion, int h_S_B2) //add parameters
+float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_proportion, float b_right_bin_proportion, int h_S_B2)
 {
 	float surfaceB2 = 0;
 
@@ -188,7 +197,7 @@ float	ft_surfaceC2(int a_right_bin_num, int c_right_bin_num, float c_left_bin_pr
 	return surfaceB2;
 }
 
-float	selectivity_overlaps() // add average_range in parameters
+float	selectivity_overlaps()
 {
 	int	a_min = a[0];
 	int	a_max = a[1];
@@ -201,52 +210,73 @@ float	selectivity_overlaps() // add average_range in parameters
 	float	surface;
 
 	if (a_max <= v_min)
+	{
 		selectivity =  0;
-	else if (a_min >= v_min)
+		printf("\ncoucou\n");
+	}
+	else if (a_min >= v_max)
+	{
 		selectivity =  0;
+		printf("\nrecoucou\n");
+	}
 	else
 	{
 		// we calculate the number of the a_left bin
 		int a_left_bin_num = ft_num_bin(a_min, bin_range, v_min, v_max);
+		printf("\n1\n");
 
 		// we calculate the number of the a_right bin
 		int a_right_bin_num = ft_num_bin(a_max, bin_range, v_min, v_max);
+		printf("\n2\n");
 
 		// we calculate the number of the b_left bin
 		float b_min = a_min - average_range;
 		int b_left_bin_num = ft_num_bin(b_min, bin_range, v_min, v_max);
+		printf("\n3\n");
 
 		// we calculate the number of the c_right bin
 		float c_max = a_max + average_range;
 		int c_right_bin_num = ft_num_bin(c_max, bin_range, v_min, v_max);
+		printf("\n4\n");
 
 		// we calculate the proportion that A overlaps a_left_bin
 		float a_left_bin_proportion = ft_bin_proportion(a_min, bin_range, a_left_bin_num, v_min);
+		printf("\n5\n");
 
 		// we calculate the proportion that A overlaps a_right_bin
 		float a_right_bin_proportion = ft_bin_proportion(a_max, bin_range, a_right_bin_num, v_min);
+		printf("\n6\n");
 
 		// we calculate the proportion that B overlaps b_left_bin and b_right_bin (who is also a_left_bin)
 		float b_left_bin_proportion = ft_bin_proportion(b_min, bin_range, b_left_bin_num, v_min);
+		printf("\n7\n");
 		float b_right_bin_proportion = 1-a_left_bin_proportion;
 
 		// we calculate the proportion that C overlaps c_right_bin and c_left_bin (who is also a_left_bin)
 		float c_right_bin_proportion = ft_bin_proportion(c_max, bin_range, c_right_bin_num, v_min);
+		printf("\n8\n");
 		float c_left_bin_proportion = 1-a_right_bin_proportion;
 
 		// we calculate h that will be the height of S_B2
 		float h_S_B2 = ft_H_SB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num);
+		printf("\n9\n");
 
 		// we calculate h that will be the height of S_C2
 		float h_S_C2 = ft_H_SC2(a_right_bin_num, a_right_bin_proportion, c_right_bin_num);
+		printf("\n10\n");
 
 		// We create the variables that will store the area of each zone
 
 		float surface_A = ft_surface_A(a_left_bin_num, a_left_bin_proportion, a_right_bin_num, a_right_bin_proportion);
+		printf("\nsurface_A = %f\n", surface_A);
 		float surfaceB1 = ft_surfaceB1(a_left_bin_num  , b_left_bin_num , b_left_bin_proportion, b_right_bin_proportion);
+		printf("\nsurfaceB1 = %f\n", surfaceB1);		
 		float surfaceB2 = ft_surfaceB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num, b_right_bin_proportion, h_S_B2);
+		printf("\nsurfaceB2 = %f\n", surfaceB2);
 		float surfaceC1 = ft_surfaceC1(a_right_bin_num, c_right_bin_num, c_right_bin_proportion, c_left_bin_proportion);
+		printf("\nsurfaceC1 = %f\n", surfaceC1);
 		float surfaceC2 = ft_surfaceC2(a_right_bin_num, c_right_bin_num, c_left_bin_proportion, c_right_bin_proportion, h_S_B2);
+		printf("\nsurfaceC2 = %f\n", surfaceC2);
 
 		// We proceed to the calculation of the selectivity
 
@@ -258,6 +288,6 @@ float	selectivity_overlaps() // add average_range in parameters
 
 int	main(void)
 {
-	printf("%.2f", selectivity_stricly_left());
+	printf("\n%f\n", selectivity_overlaps());
 	return (0);
 }

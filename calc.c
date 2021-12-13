@@ -12,7 +12,7 @@ int array_upper2[ARRAY_LENGTH] = {6, 13, 19, 30, 35};
 int array_lower_tri2[ARRAY_LENGTH] = {0, 2, 10, 22, 30};
 int array_upper_tri2[ARRAY_LENGTH] = {6, 13, 19, 30, 35};
 
-int statistic_target = 7; 		//nombre de buckets
+int statistic_target = 5; 		//nombre de buckets
 
 int		*ft_hist_length()
 {
@@ -96,14 +96,9 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 	return (buckets);
 }
 
-float estimation_cardinality_join(float* bucket1, float* bucket2){
-
-
-    float *list_join;
-    list_join = malloc(sizeof(float) * statistic_target+1 );
-    list_join[statistic_target + 1] = '\0';
-
-
+float estimation_cardinality_join(float* bucket1, float* bucket2)
+{
+    float list_join[statistic_target];
     int i;
     for (i=0; i < statistic_target ; i++){
         list_join[i] = bucket1[i] * bucket2[i];
@@ -114,7 +109,6 @@ float estimation_cardinality_join(float* bucket1, float* bucket2){
         estimation += list_join[i] ;
     }
     return (estimation);
-
 }
 
 int    main(void)
@@ -123,12 +117,9 @@ int    main(void)
     float *bucket2;
     bucket1 = ft_equiwidth_freq(array_lower1, array_upper1);
     bucket2 = ft_equiwidth_freq(array_lower2, array_upper2);
-
-
     float estimation = estimation_cardinality_join(bucket1,bucket2);
     printf("join cardinality estimation = %f\n", estimation );
     free (bucket1);
-
     free (bucket2);
     return (0);
 }
