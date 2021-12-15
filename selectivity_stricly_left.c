@@ -1,16 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define LENGTH 12
+#define ARRAY_LENGTH 5
+#define STATISTIC_TARGET 5
 
-int		a[2] = {6, 10};
-float	histogram[LENGTH] = {0, 30, 7.5, 6, 9, 1.67, 2.33, 0.83, 1.17, 1.5};
-// ranges = ( (0, 14), (2, 9), (7, 15), (19, 27), (22, 30) )
-// histogram[0] = 0;		v_min
-// histogram[1] = 30;		v_max
-// histogram[2] = 45;		surface_tot
-// histogram[3] = 5;		bin_range
-// histogram[4] = 9;		average_range
-// histogram[5-10] = upp;	donnees singlehisto.c
+int array_lower1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper1[ARRAY_LENGTH] = {14, 9, 15, 27, 30};
+int array_lower_tri1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper_tri1[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
+int	a[2] = {5, 10};
+
+float	*ft_equiwidth_freq(int *array_lower, int *array_upper, int *array_lower_tri, int *array_upper_tri)
+{
+	int		i;
+	int		j;
+	int		hist_length;
+	float	lowest_bound;
+	float	lower_bucket_bound;
+	float	upper_bucket_bound;
+	float	bucket_length;
+	float	*bucket;
+	float	increment;
+
+	hist_length = array_upper_tri[ARRAY_LENGTH - 1] - array_lower_tri[0];
+	bucket_length = (float)hist_length / (float)STATISTIC_TARGET;
+	lowest_bound = array_lower_tri[0];
+	lower_bucket_bound = lowest_bound;
+	upper_bucket_bound = lower_bucket_bound + bucket_length;
+	bucket = malloc(sizeof(float) * STATISTIC_TARGET);
+
+	if (!bucket)
+		return NULL;
+
+	for (i = 0; i < STATISTIC_TARGET; i++)
+	{
+		for(j = 0; j < ARRAY_LENGTH; j++)
+		{
+			if((array_lower[j] > lower_bucket_bound) && (array_upper[j] < upper_bucket_bound))
+			{
+				increment = (array_upper[j] - array_lower[j]) / bucket_length;
+				bucket[i] += increment;
+			}
+			else if((array_lower[j] > lower_bucket_bound) && (array_lower[j] < upper_bucket_bound))
+			{
+				increment = (upper_bucket_bound - array_lower[j]) / bucket_length;
+				bucket[i] += increment;
+			}
+			else if((array_lower[j] <= lower_bucket_bound) && (array_upper[j] >= upper_bucket_bound))
+			{;
+				bucket[i] += 1 ;
+			}
+			else if((array_upper[j] < upper_bucket_bound) && (array_upper[j] > lower_bucket_bound))
+			{
+				increment = (array_upper[j] - lower_bucket_bound) / bucket_length;
+				bucket[i] += increment ;
+			}
+		}
+		lower_bucket_bound = upper_bucket_bound;
+		upper_bucket_bound += bucket_length;
+	}
+	return (bucket);
+}
+
+float ft_average_range()
+{
+	int i;
+	float res = 0;
+	for(i = 0; i < ARRAY_LENGTH; i++)
+	{
+		res += array_upper1[i] - array_lower1[i];
+	}
+	res = res / ARRAY_LENGTH;
+	return res;
+}
+
+float *ft_build_histo()
+{
+	int i;
+	float surface_tot = 0;
+	float *res;
+	float *equiwidth_freq;
+	res = malloc(sizeof(float) * (STATISTIC_TARGET + 5));
+	equiwidth_freq = malloc(sizeof(float) * STATISTIC_TARGET);
+	if (!equiwidth_freq)
+		return NULL;
+
+	equiwidth_freq = ft_equiwidth_freq(array_lower1, array_upper1, array_lower_tri1, array_upper_tri1);
+	for(i = 0; i < STATISTIC_TARGET; i++)
+	{
+		surface_tot += equiwidth_freq[i];
+		res[i] = equiwidth_freq[i];
+	}
+	res[STATISTIC_TARGET] = array_lower_tri1[0];
+	res[STATISTIC_TARGET + 1] = array_upper_tri1[ARRAY_LENGTH - 1];
+	res[STATISTIC_TARGET + 2] = surface_tot;
+	res[STATISTIC_TARGET + 3] = STATISTIC_TARGET;
+	res[STATISTIC_TARGET + 4] = ft_average_range();
+	free(equiwidth_freq);
+	return res;
+}
 
 int	ft_num_bin(float value, float bin_range, float v_min)
 {
@@ -33,7 +120,7 @@ float	ft_bin_proportion(float value, float bin_range, int bin_num, float v_min)
 	return bin_proportion;
 }
 
-float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num)
+float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float *histogram)
 {
 	float h = histogram[b_left_bin_num  + 5];
 	int i = 0;
@@ -50,10 +137,10 @@ float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_n
 			h = histogram[i+5];
 	}
 	return h;
-	
+
 }
 
-float	ft_surface_prime(int b_left_bin_num, float b_left_bin_proportion)
+float	ft_surface_prime(int b_left_bin_num, float b_left_bin_proportion, float *histogram)
 {
 	float surface_prime = 0;
 	int i;
@@ -64,7 +151,7 @@ float	ft_surface_prime(int b_left_bin_num, float b_left_bin_proportion)
 	return surface_prime;
 }
 
-float	*ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, int length_B)
+float	*ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, int length_B, float *histogram)
 {
 	float	*histogram_s_ignore;
 	int i;
@@ -82,14 +169,14 @@ float	*ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, int length_
 	return histogram_s_ignore;
 }
 
-float	ft_surfaceB1(int a_left_bin_num , int b_left_bin_num , float b_left_bin_proportion, float b_right_bin_proportion)
+float	ft_surfaceB1(int a_left_bin_num , int b_left_bin_num , float b_left_bin_proportion, float b_right_bin_proportion, float *histogram)
 {
 
 	float surfaceB1 = 0;
 	int i;
 	int length_B = a_left_bin_num - b_left_bin_num + 1;
 	// We create a histogram that represent surface to  ignore from the surface above S_B2
-	float *histogram_s_ignore = ft_histogram_s_ignore(a_left_bin_num, b_left_bin_num, length_B);
+	float *histogram_s_ignore = ft_histogram_s_ignore(a_left_bin_num, b_left_bin_num, length_B, histogram);
 
 	for (i = 0; i < length_B ; i++)
 	{
@@ -118,7 +205,7 @@ float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_prop
 	return surfaceB2;
 }
 
-float	selectivity_stricly_left()
+float	selectivity_stricly_left(float *histogram)
 {
 	int	a_min = a[0];
 	float	v_min = histogram[0];
@@ -148,12 +235,12 @@ float	selectivity_stricly_left()
 		float b_left_bin_proportion = ft_bin_proportion(b_min, bin_range, b_left_bin_num, v_min);
 		float b_right_bin_proportion = 1-a_left_bin_proportion;
 		// we calculate h that will be the height of S_B2
-		float h_S_B2 = ft_H_SB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num);
+		float h_S_B2 = ft_H_SB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num, histogram);
 
 		// We create the variables that will store the area of each zone
 
-		float surface_prime = ft_surface_prime(b_left_bin_num, b_left_bin_proportion);
-		float surfaceB1 = ft_surfaceB1(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion);
+		float surface_prime = ft_surface_prime(b_left_bin_num, b_left_bin_proportion, histogram);
+		float surfaceB1 = ft_surfaceB1(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion, histogram);
 		float surfaceB2 = ft_surfaceB2(a_left_bin_num, b_left_bin_num, b_left_bin_proportion, b_right_bin_proportion, h_S_B2);
 
 		// We proceed to the calculation of the selectivity
@@ -166,6 +253,12 @@ float	selectivity_stricly_left()
 
 int	main(void)
 {
-	printf("%.2f", selectivity_stricly_left());
+	int i;
+	float selectivity;
+	float *histogram;
+	histogram = ft_build_histo();
+	selectivity = selectivity_stricly_left(histogram);
+	printf("\nSelectivity strictly left of estimation = %f\n", selectivity);
+	free(histogram);
 	return (0);
 }
