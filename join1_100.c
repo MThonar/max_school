@@ -158,25 +158,22 @@ int	main(void)
 	float *bucket1;
 	float *bucket2;
 	bucket1 = ft_equiwidth_freq(array_lower1, array_upper1, array_lower_tri1, array_upper_tri1);
-	printf("bucket1 = ( ");
-	for(i = 0; i < STATISTIC_TARGET; i++)
-		printf("%f ", bucket1[i]);
-	printf(")\n");
+	printf("bucket1 = (");
+	for(i = 0; i < STATISTIC_TARGET - 1; i++)
+		printf("%f, ", bucket1[i]);
+	printf("%f)\n", bucket1[STATISTIC_TARGET - 1]);
 	bucket2 = ft_equiwidth_freq(array_lower2, array_upper2, array_lower_tri2, array_upper_tri2);
-	printf("bucket2 = ( ");
-	for(i = 0; i < STATISTIC_TARGET; i++)
-		printf("%f ", bucket2[i]);
-	printf(")\n");
+	printf("bucket2 = (");
+	for(i = 0; i < STATISTIC_TARGET - 1; i++)
+		printf("%f, ", bucket2[i]);
+	printf("%f)\n", bucket2[STATISTIC_TARGET - 1]);
 	float resultat;
 	resultat = multiplication(bucket1,bucket2);
-	printf("First estimation = %f\n", resultat);
 	float moyenne1 = moyenne(bucket1);
-	printf("First table average = %f\n", moyenne1);
 	float moyenne2 = moyenne(bucket2);
-	printf("Second table average = %f\n", moyenne2);
 	float resultat_nouveau;
 	resultat_nouveau = (resultat / (moyenne1*moyenne2));
-	printf("Final estimation = %f\n", resultat_nouveau);
+	printf("Join cardinality estimation = %f\n", resultat_nouveau);
 	free (bucket1);
 
 	free (bucket2);

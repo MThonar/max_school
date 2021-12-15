@@ -50,15 +50,15 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 	int		j;
 	int		min_hist_length;
 	int		hist_lowest_bound;
-	int		lower_bucket_bound;
-	int		upper_bucket_bound;
 	int		array_length;
+	float	lower_bucket_bound;
+	float	upper_bucket_bound;
 	float	bucket_length;
 	float	*buckets;
 	float	increment;
 
 	min_hist_length = ft_hist_length()[0];
-	bucket_length = min_hist_length / STATISTIC_TARGET;
+	bucket_length = (float)min_hist_length / (float)STATISTIC_TARGET;
 	hist_lowest_bound = ft_hist_length()[1];
 	lower_bucket_bound = hist_lowest_bound;
 	upper_bucket_bound = lower_bucket_bound + bucket_length;
@@ -71,16 +71,20 @@ float	*ft_equiwidth_freq(int *array_lowerx, int *array_upperx)
 
 	for (i = 0; i < STATISTIC_TARGET; i++)
 	{
-		for(j = 0; j < array_length; j++)
+		for(j = 0; j < ARRAY_LENGTH; j++)
 		{
-
-			if((array_lowerx[j] > lower_bucket_bound) && (array_lowerx[j] < upper_bucket_bound))
+			if((array_lowerx[j] > lower_bucket_bound) && (array_upperx[j] < upper_bucket_bound))
+			{
+				increment = (array_upperx[j] - array_lowerx[j]) / bucket_length;
+				buckets[i] += increment;
+			}
+			else if((array_lowerx[j] > lower_bucket_bound) && (array_lowerx[j] < upper_bucket_bound))
 			{
 				increment = (upper_bucket_bound - array_lowerx[j]) / bucket_length;
 				buckets[i] += increment;
 			}
 			else if((array_lowerx[j] <= lower_bucket_bound) && (array_upperx[j] >= upper_bucket_bound))
-			{
+			{;
 				buckets[i] += 1 ;
 			}
 			else if((array_upperx[j] < upper_bucket_bound) && (array_upperx[j] > lower_bucket_bound))
@@ -117,15 +121,15 @@ int    main(void)
     float *bucket2 = NULL;
     float estimation;
     bucket1 = ft_equiwidth_freq(array_lower1, array_upper1);
-    /*printf("bucket1 = ( ");
-	for(i = 0; i < STATISTIC_TARGET; i++)
-		printf("%f ", bucket1[i]);
-	printf(")\n");*/
+    printf("bucket1 = (");
+	for(i = 0; i < STATISTIC_TARGET - 1; i++)
+		printf("%f, ", bucket1[i]);
+	printf("%f)\n", bucket1[STATISTIC_TARGET-1]);
     bucket2 = ft_equiwidth_freq(array_lower2, array_upper2);
-   	/*printf("bucket2 = ( ");
-	for(i = 0; i < STATISTIC_TARGET; i++)
-		printf("%f ", bucket2[i]);
-	printf(")\n");*/
+    printf("bucket2 = (");
+	for(i = 0; i < STATISTIC_TARGET - 1; i++)
+		printf("%f, ", bucket2[i]);
+	printf("%f)\n", bucket2[STATISTIC_TARGET-1]);
     estimation = estimation_cardinality_join(bucket1, bucket2);
     free (bucket1);
     free (bucket2);
