@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define ARRAY_LENGTH 5
-#define STATISTIC_TARGET 5
+#define STATISTIC_TARGET 4
 
 int array_lower1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper1[ARRAY_LENGTH] = {14, 9, 15, 27, 30};
@@ -93,7 +93,7 @@ float *ft_build_histo()
 	res[STATISTIC_TARGET] = array_lower_tri1[0];
 	res[STATISTIC_TARGET + 1] = array_upper_tri1[ARRAY_LENGTH - 1];
 	res[STATISTIC_TARGET + 2] = surface_tot;
-	res[STATISTIC_TARGET + 3] = STATISTIC_TARGET;
+	res[STATISTIC_TARGET + 3] = (res[STATISTIC_TARGET + 1] - res[STATISTIC_TARGET]) / STATISTIC_TARGET;
 	res[STATISTIC_TARGET + 4] = ft_average_range();
 	free(equiwidth_freq);
 	return res;

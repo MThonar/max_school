@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define ARRAY_LENGTH 5
+#define ARRAY_LENGTH 100
 #define STATISTIC_TARGET 5
 
 int array_lower1[ARRAY_LENGTH] = {2, 37, 52, 53, 16, 75, 85, 62, 75, 65, 21, 12, 96, 83, 51, 45, 80, 71, 99, 23, 63, 44, 29, 28, 26, 62, 25,
@@ -21,7 +21,7 @@ int array_upper_tri1[ARRAY_LENGTH] = {10, 13, 20, 22, 24, 32, 39, 40, 42, 46, 51
 123, 123, 124, 125, 127, 131, 132, 133, 134, 135, 136, 137, 137, 140, 140, 142, 143, 143, 144, 144, 146, 148, 150, 152, 154, 155, 158, 163, 163,
 164, 164, 166, 170, 172, 172, 172, 176, 177, 179, 180, 186};
 
-int	a[2] = {5, 10};
+int	a[2] = {35, 40};
 
 float	*ft_equiwidth_freq(int *array_lower, int *array_upper, int *array_lower_tri, int *array_upper_tri)
 {
@@ -107,7 +107,7 @@ float *ft_build_histo()
 	res[STATISTIC_TARGET] = array_lower_tri1[0];
 	res[STATISTIC_TARGET + 1] = array_upper_tri1[ARRAY_LENGTH - 1];
 	res[STATISTIC_TARGET + 2] = surface_tot;
-	res[STATISTIC_TARGET + 3] = STATISTIC_TARGET;
+	res[STATISTIC_TARGET + 3] = (res[STATISTIC_TARGET + 1] - res[STATISTIC_TARGET]) / STATISTIC_TARGET;
 	res[STATISTIC_TARGET + 4] = ft_average_range();
 	free(equiwidth_freq);
 	return res;

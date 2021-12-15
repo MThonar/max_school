@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define ARRAY_LENGTH 10
+#define ARRAY_LENGTH 5
 #define STATISTIC_TARGET 5
 
 int array_lower1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper1[ARRAY_LENGTH] = {14, 9, 15, 27, 30};
 int array_lower_tri1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
 int array_upper_tri1[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
-int	a[2] = {5, 10};
+int	a[2] = {15, 20};
 
 float	*ft_equiwidth_freq(int *array_lower, int *array_upper, int *array_lower_tri, int *array_upper_tri)
 {
@@ -93,7 +93,7 @@ float *ft_build_histo()
 	res[STATISTIC_TARGET] = array_lower_tri1[0];
 	res[STATISTIC_TARGET + 1] = array_upper_tri1[ARRAY_LENGTH - 1];
 	res[STATISTIC_TARGET + 2] = surface_tot;
-	res[STATISTIC_TARGET + 3] = STATISTIC_TARGET;
+	res[STATISTIC_TARGET + 3] = (res[STATISTIC_TARGET + 1] - res[STATISTIC_TARGET]) / STATISTIC_TARGET;
 	res[STATISTIC_TARGET + 4] = ft_average_range();
 	free(equiwidth_freq);
 	return res;
@@ -219,7 +219,9 @@ float	selectivity_stricly_left(float *histogram)
 	if (a_min <= v_min)
 		selectivity =  0;
 	else if (a_min >= v_max)
+	{
 		selectivity =  1;
+	}
 	else
 	{
 		// we calculate the number of the a_left bin
