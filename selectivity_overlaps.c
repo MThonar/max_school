@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define LENGTH 12
+#define ARRAY_LENGTH 5
+#define STATISTIC_TARGET 5
 
-int		a[2] = {5, 10};
-float	histogram[LENGTH] = {0, 30, 7.5, 6, 9, 1.67, 2.33, 0.83, 1.17, 1.5};
+int array_lower1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper1[ARRAY_LENGTH] = {14, 9, 15, 27, 30};
+int array_lower_tri1[ARRAY_LENGTH] = {0, 2, 7, 19, 22};
+int array_upper_tri1[ARRAY_LENGTH] = {9, 14, 15, 27, 30};
+int	a[2] = {5, 10};
+//float histogram[LENGTH] = {0, 30, 7.5, 6, 9, 1.67, 2.33, 0.83, 1.17, 1.5};
 // ranges = ( (0, 14), (2, 9), (7, 15), (19, 27), (22, 30) )
 // histogram[0] = 0;		v_min
 // histogram[1] = 30;		v_max
@@ -11,6 +16,95 @@ float	histogram[LENGTH] = {0, 30, 7.5, 6, 9, 1.67, 2.33, 0.83, 1.17, 1.5};
 // histogram[3] = 5;		bin_range
 // histogram[4] = 9;		average_range
 // histogram[5-10] = upp;	donnees singlehisto.c
+
+float	*ft_equiwidth_freq(int *array_lower, int *array_upper, int *array_lower_tri, int *array_upper_tri)
+{
+	int		i;
+	int		j;
+	int		hist_length;
+	float	lowest_bound;
+	float	lower_bucket_bound;
+	float	upper_bucket_bound;
+	float	bucket_length;
+	float	*bucket;
+	float	increment;
+
+	hist_length = array_upper_tri[ARRAY_LENGTH - 1] - array_lower_tri[0];
+	bucket_length = (float)hist_length / (float)STATISTIC_TARGET;
+	lowest_bound = array_lower_tri[0];
+	lower_bucket_bound = lowest_bound;
+	upper_bucket_bound = lower_bucket_bound + bucket_length;
+	bucket = malloc(sizeof(float) * STATISTIC_TARGET);
+
+	if (!bucket)
+		return NULL;
+
+	for (i = 0; i < STATISTIC_TARGET; i++)
+	{
+		for(j = 0; j < ARRAY_LENGTH; j++)
+		{
+			if((array_lower[j] > lower_bucket_bound) && (array_upper[j] < upper_bucket_bound))
+			{
+				increment = (array_upper[j] - array_lower[j]) / bucket_length;
+				bucket[i] += increment;
+			}
+			else if((array_lower[j] > lower_bucket_bound) && (array_lower[j] < upper_bucket_bound))
+			{
+				increment = (upper_bucket_bound - array_lower[j]) / bucket_length;
+				bucket[i] += increment;
+			}
+			else if((array_lower[j] <= lower_bucket_bound) && (array_upper[j] >= upper_bucket_bound))
+			{;
+				bucket[i] += 1 ;
+			}
+			else if((array_upper[j] < upper_bucket_bound) && (array_upper[j] > lower_bucket_bound))
+			{
+				increment = (array_upper[j] - lower_bucket_bound) / bucket_length;
+				bucket[i] += increment ;
+			}
+		}
+		lower_bucket_bound = upper_bucket_bound;
+		upper_bucket_bound += bucket_length;
+	}
+	return (bucket);
+}
+
+float ft_average_range()
+{
+	int i;
+	float res = 0;
+	for(i = 0; i < ARRAY_LENGTH; i++)
+	{
+		res += array_upper1[i] - array_lower1[i];
+	}
+	res = res / ARRAY_LENGTH;
+	return res;
+}
+
+float *ft_build_histo()
+{
+	int i;
+	float surface_tot = 0;
+	float res[STATISTIC_TARGET + 5];
+	float *equiwidth_freq;
+	equiwidth_freq = malloc(sizeof(float) * STATISTIC_TARGET);
+	if (!equiwidth_freq)
+		return NULL;
+
+	equiwidth_freq = ft_equiwidth_freq(array_lower1, array_upper1, array_lower_tri1, array_upper_tri1);
+	for(i = 0; i < STATISTIC_TARGET; i++)
+	{
+		surface_tot += equiwidth_freq[i];
+		res[i] = equiwidth_freq[i];
+	}
+	res[STATISTIC_TARGET] = array_upper_tri1[0];
+	res[STATISTIC_TARGET + 1] = array_upper_tri1[ARRAY_LENGTH - 1];
+	res[STATISTIC_TARGET + 2] = surface_tot;
+	res[STATISTIC_TARGET + 3] = STATISTIC_TARGET;
+	res[STATISTIC_TARGET + 4] = ft_average_range();
+	free(equiwidth_freq);
+	return res;
+}
 
 int	ft_num_bin(float value, float bin_range, float v_min, float v_max)
 {
@@ -41,143 +135,143 @@ float	ft_bin_proportion(float value, float bin_range, int bin_num, float v_min)
 	return bin_proportion;
 }
 
-float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num)
+float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float *histogram)
 {
-	float h = histogram[b_left_bin_num+5];
+	float h = histogram[b_left_bin_num];
 	int i = 0;
 	// we calculate the minimum value in B
 	for (i = b_left_bin_num; i < a_left_bin_num; i++)
 	{
 		//printf("\nREPROUTE (valeur de i = %d)\n", i);
-		if (histogram[i+5] < h)
-			h = histogram[i+5];
+		if (histogram[i] < h)
+			h = histogram[i];
 	}
 	//  we verify if S_B2 overlaps on a_left_bin. If yes, we verifiy one more time the minimum value of B
 	if (a_left_bin_proportion < 1)
 	{
-		if (histogram[a_left_bin_num+5] < h)
-			h = histogram[i+5];
+		if (histogram[a_left_bin_num] < h)
+			h = histogram[i];
 	}
 	return h;
 }
 
-float	ft_H_SC2(int a_right_bin_num, float a_right_bin_proportion, int c_right_bin_num)
+float	ft_H_SC2(int a_right_bin_num, float a_right_bin_proportion, int c_right_bin_num, float *histogram)
 {
 	printf("H_SC2\n");
 	printf("a_right_bin_num : %i\n", a_right_bin_num);
 	printf("a_right_bin_proportion : %f\n", a_right_bin_proportion);
 	printf("c_right_bin_num : %i\n", c_right_bin_num);
-	float h = histogram[c_right_bin_num+5];
+	float h = histogram[c_right_bin_num];
 	int i = 0;
 	// we calculate the minimum value in C
 	for (i = c_right_bin_num; i > a_right_bin_num; i--)
 	{
-		if (histogram[i+5] < h)
-			h = histogram[i+5];
+		if (histogram[i] < h)
+			h = histogram[i];
 	}
 	//  we verify if S_C2 overlaps on a_right_bin. If yes, we verifiy one more time the minimum value of C
 	if (a_right_bin_proportion < 1)
 	{
-		if (histogram[a_right_bin_num+5] < h)
-			h = histogram[i+5];
+		if (histogram[a_right_bin_num] < h)
+			h = histogram[i];
 	}
 	printf("h : %f\n", h);
 	return h;
 }
 
-float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_bin_num, float a_right_bin_proportion) //surface_prime not initialized
+float	ft_surface_A(int a_left_bin_num, float a_left_bin_proportion, int a_right_bin_num, float a_right_bin_proportion, float *histogram)
 {
 	float surface_A = 0;
 	// we calculate surface_A
 	for (int i = a_left_bin_num + 1; i < a_right_bin_num; i++)
-		surface_A += histogram[i+5];
+		surface_A += histogram[i];
 		printf("rentre pas\n");
-	surface_A += histogram[a_left_bin_num+5] * a_left_bin_proportion;
-	surface_A += histogram[a_right_bin_num+5] * a_right_bin_proportion;
+	surface_A += histogram[a_left_bin_num] * a_left_bin_proportion;
+	surface_A += histogram[a_right_bin_num] * a_right_bin_proportion;
 	return surface_A;
 }
 
-float	*ft_histogram_s_B_ignore(int a_left_bin_num, int b_left_bin_num, int length_B)
+float	*ft_histogram_s_B_ignore(int a_left_bin_num, int b_left_bin_num, int length_B, float *histogram)
 {
 	float	*histogram_s_B_ignore;
 	histogram_s_B_ignore = malloc(sizeof(float) * length_B + 1);
 	if (!histogram_s_B_ignore)
 		return NULL;
-	float current_h_S_B_ignore = histogram[b_left_bin_num+5];
+	float current_h_S_B_ignore = histogram[b_left_bin_num];
 	for (int i = b_left_bin_num; i <= a_left_bin_num; i++)
 	{
-		if (current_h_S_B_ignore > histogram[i+5])
-			current_h_S_B_ignore = histogram[i+5];
+		if (current_h_S_B_ignore > histogram[i])
+			current_h_S_B_ignore = histogram[i];
 		histogram_s_B_ignore[i-b_left_bin_num] = current_h_S_B_ignore;
 	}
 	histogram_s_B_ignore[length_B] = '\0';
 	return histogram_s_B_ignore;
 }
 
-float	*ft_histogram_s_C_ignore(int a_right_bin_num, int c_right_bin_num, int length_B)
+float	*ft_histogram_s_C_ignore(int a_right_bin_num, int c_right_bin_num, int length_B, float *histogram)
 {
 	float	*histogram_s_C_ignore;
 	histogram_s_C_ignore = malloc(sizeof(float) * length_B + 1);
 	if (!histogram_s_C_ignore)
 		return NULL;
-	float current_h_S_C_ignore = histogram[c_right_bin_num+5];
+	float current_h_S_C_ignore = histogram[c_right_bin_num];
 	for (int i = c_right_bin_num; i >= a_right_bin_num; i--)
 	{
-		if (current_h_S_C_ignore > histogram[i+5])
-			current_h_S_C_ignore = histogram[i+5];
+		if (current_h_S_C_ignore > histogram[i])
+			current_h_S_C_ignore = histogram[i];
 		histogram_s_C_ignore[i-a_right_bin_num] = current_h_S_C_ignore;
 	}
 	histogram_s_C_ignore[length_B] = '\0';
 	return histogram_s_C_ignore;
 }
 
-float	ft_surfaceB1(int a_left_bin_num  , int b_left_bin_num , float b_left_bin_proportion, float b_right_bin_proportion)
+float	ft_surfaceB1(int a_left_bin_num  , int b_left_bin_num , float b_left_bin_proportion, float b_right_bin_proportion, float *histogram)
 {
 
 	float surfaceB1 = 0;
 	int length_B = a_left_bin_num - b_left_bin_num + 1;
 	// We create a histogram that represent surface to  ignore from the surface above S_B2
-	float *histogram_s_B_ignore = ft_histogram_s_B_ignore(a_left_bin_num, b_left_bin_num, length_B);
+	float *histogram_s_B_ignore = ft_histogram_s_B_ignore(a_left_bin_num, b_left_bin_num, length_B, histogram);
 
 	for (int i = 0; i < length_B; i++)
 	{
 		if (i == length_B - 1)
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_B_ignore[i]) * b_right_bin_proportion;
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_B_ignore[i]) * b_right_bin_proportion;
 		else if (i == 0)
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_B_ignore[i]) * b_left_bin_proportion;
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_B_ignore[i]) * b_left_bin_proportion;
 		else
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_B_ignore[i]);
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_B_ignore[i]);
 	}
 	return surfaceB1;
 }
 
-float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_proportion, float c_left_bin_proportion) //add length_B in parameters
+float	ft_surfaceC1(int a_right_bin_num, int c_right_bin_num, float c_right_bin_proportion, float c_left_bin_proportion, float *histogram)
 {
 
 	float surfaceC1 = 0;
 	int i;
 	int length_C = c_right_bin_num - a_right_bin_num + 1;
 	// We create a histogram that represent surface to  ignore from the surface above S_C2
-	float *histogram_s_C_ignore = ft_histogram_s_C_ignore(a_right_bin_num, c_right_bin_num, length_C);
+	float *histogram_s_C_ignore = ft_histogram_s_C_ignore(a_right_bin_num, c_right_bin_num, length_C, histogram);
 	for (i = 0; i < length_C; i++){
 	printf("histogram_s_C_ignore = %f\n", histogram_s_C_ignore[i]);}
 	for (i = 0; i < length_C; i++)
 	{
 		if (i == 0){
-			surfaceC1 += (histogram[i + a_right_bin_num+5] - histogram_s_C_ignore[i]) * c_left_bin_proportion;
+			surfaceC1 += (histogram[i + a_right_bin_num] - histogram_s_C_ignore[i]) * c_left_bin_proportion;
 			printf("i = %i\n", i);
 			printf("c_right_bin_num = %i\n", i);
-			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num+5]);
+			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num]);
 			printf("histogram_s_C_ignore[i] = %f\n", histogram_s_C_ignore[i]);
 			printf("c_left_bin_proportion = %f\n", c_left_bin_proportion);}
 		else if (i == length_C-1){
-			surfaceC1 += (histogram[i + a_right_bin_num+5] - histogram_s_C_ignore[i]) * c_right_bin_proportion;
-			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num+5]);
+			surfaceC1 += (histogram[i + a_right_bin_num] - histogram_s_C_ignore[i]) * c_right_bin_proportion;
+			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num]);
 			printf("histogram_s_C_ignore[i] = %f\n", histogram_s_C_ignore[i]);
 			printf("c_right_bin_proportion = %f\n", c_right_bin_proportion);}
 		else{
-			surfaceC1 += (histogram[i + a_right_bin_num+5] - histogram_s_C_ignore[i]);
-			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num+5]);
+			surfaceC1 += (histogram[i + a_right_bin_num] - histogram_s_C_ignore[i]);
+			printf("histogram[i + c_right_bin_num] = %f\n", histogram[i + c_right_bin_num]);
 			printf("histogram_s_C_ignore = %f\n", histogram_s_C_ignore[i]);
 	}}
 	return surfaceC1;
@@ -215,15 +309,15 @@ float	ft_surfaceC2(int a_right_bin_num, int c_right_bin_num, float c_left_bin_pr
 	return surfaceC2;
 }
 
-float	selectivity_overlaps()
+float	selectivity_overlaps(float *histogram)
 {
 	int	a_min = a[0];
 	int	a_max = a[1];
-	float	v_min = histogram[0];
-	float	v_max = histogram[1];
-	float	surface_tot = histogram[2];
-	float	bin_range = histogram[3];
-	float	average_range = histogram[4];
+	float	v_min = histogram[STATISTIC_TARGET];
+	float	v_max = histogram[STATISTIC_TARGET + 1];
+	float	surface_tot = histogram[STATISTIC_TARGET + 2];
+	float	bin_range = histogram[STATISTIC_TARGET + 3];
+	float	average_range = histogram[STATISTIC_TARGET + 4];
 	float	selectivity;
 	float	surface;
 
@@ -280,23 +374,23 @@ float	selectivity_overlaps()
 		float c_left_bin_proportion = 1-a_right_bin_proportion;
 
 		// we calculate h that will be the height of S_B2
-		float h_S_B2 = ft_H_SB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num);
+		float h_S_B2 = ft_H_SB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num, histogram);
 		printf("\n9\n");
 
 		// we calculate h that will be the height of S_C2
-		float h_S_C2 = ft_H_SC2(a_right_bin_num, a_right_bin_proportion, c_right_bin_num);
+		float h_S_C2 = ft_H_SC2(a_right_bin_num, a_right_bin_proportion, c_right_bin_num, histogram);
 		printf("\n10\n");
 
 		// We create the variables that will store the area of each zone
 
-		float surface_A = ft_surface_A(a_left_bin_num, a_left_bin_proportion, a_right_bin_num, a_right_bin_proportion);
+		float surface_A = ft_surface_A(a_left_bin_num, a_left_bin_proportion, a_right_bin_num, a_right_bin_proportion, histogram);
 		printf("surface_A : %f/n", surface_A);
 		printf("\nsurface_A = %f\n", surface_A);
-		float surfaceB1 = ft_surfaceB1(a_left_bin_num  , b_left_bin_num , b_left_bin_proportion, b_right_bin_proportion);
+		float surfaceB1 = ft_surfaceB1(a_left_bin_num  , b_left_bin_num , b_left_bin_proportion, b_right_bin_proportion, histogram);
 		printf("\nsurfaceB1 = %f\n", surfaceB1);
 		float surfaceB2 = ft_surfaceB2(a_left_bin_num, a_left_bin_proportion, b_left_bin_num, b_right_bin_proportion, h_S_B2);
 		printf("\nsurfaceB2 = %f\n", surfaceB2);
-		float surfaceC1 = ft_surfaceC1(a_right_bin_num, c_right_bin_num, c_right_bin_proportion, c_left_bin_proportion);
+		float surfaceC1 = ft_surfaceC1(a_right_bin_num, c_right_bin_num, c_right_bin_proportion, c_left_bin_proportion, histogram);
 		printf("\nsurfaceC1 = %f\n", surfaceC1);
 		float surfaceC2 = ft_surfaceC2(a_right_bin_num, c_right_bin_num, c_left_bin_proportion, c_right_bin_proportion, h_S_C2);
 		printf("\nsurfaceC2 = %f\n", surfaceC2);
@@ -311,6 +405,12 @@ float	selectivity_overlaps()
 
 int	main(void)
 {
-	printf("\n%f\n", selectivity_overlaps());
+	float selectivity;
+	float *histogram;
+	histogram = malloc(sizeof(float) * (STATISTIC_TARGET + 5));
+	histogram = ft_build_histo();
+	selectivity = selectivity_overlaps(histogram);
+	printf("\n%f\n", selectivity);
+	free(histogram);
 	return (0);
 }
