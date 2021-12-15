@@ -85,8 +85,9 @@ float *ft_build_histo()
 {
 	int i;
 	float surface_tot = 0;
-	float res[STATISTIC_TARGET + 5];
+	float *res;
 	float *equiwidth_freq;
+	res = malloc(sizeof(float) * (STATISTIC_TARGET + 5));
 	equiwidth_freq = malloc(sizeof(float) * STATISTIC_TARGET);
 	if (!equiwidth_freq)
 		return NULL;
@@ -407,7 +408,6 @@ int	main(void)
 {
 	float selectivity;
 	float *histogram;
-	histogram = malloc(sizeof(float) * (STATISTIC_TARGET + 5));
 	histogram = ft_build_histo();
 	selectivity = selectivity_overlaps(histogram);
 	printf("\n%f\n", selectivity);
