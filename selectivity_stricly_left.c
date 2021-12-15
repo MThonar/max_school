@@ -122,19 +122,19 @@ float	ft_bin_proportion(float value, float bin_range, int bin_num, float v_min)
 
 float	ft_H_SB2(int a_left_bin_num, float a_left_bin_proportion, int b_left_bin_num, float *histogram)
 {
-	float h = histogram[b_left_bin_num  + 5];
+	float h = histogram[b_left_bin_num];
 	int i = 0;
 	// we calculate the minimum value in B
 	for (i = b_left_bin_num; i < a_left_bin_num; i++)
 	{
-		if (histogram[i+5] < h)
-			h = histogram[i+5];
+		if (histogram[i] < h)
+			h = histogram[i];
 	}
 	//  we verify if S_B2 overlaps on a_left_bin. If yes, we verifiy one more time the minimum value of B
 	if (a_left_bin_proportion < 1)
 	{
-		if (histogram[a_left_bin_num+5] < h)
-			h = histogram[i+5];
+		if (histogram[a_left_bin_num] < h)
+			h = histogram[i];
 	}
 	return h;
 
@@ -146,8 +146,8 @@ float	ft_surface_prime(int b_left_bin_num, float b_left_bin_proportion, float *h
 	int i;
 	// we calculate surface_prime
 	for (i = 0; i < b_left_bin_num; i++)
-		surface_prime += histogram[i+5];
-	surface_prime += histogram[b_left_bin_num+5] * (1 - b_left_bin_proportion);
+		surface_prime += histogram[i];
+	surface_prime += histogram[b_left_bin_num] * (1 - b_left_bin_proportion);
 	return surface_prime;
 }
 
@@ -158,11 +158,11 @@ float	*ft_histogram_s_ignore(int a_left_bin_num, int b_left_bin_num, int length_
 	histogram_s_ignore = malloc(sizeof(float) * length_B + 1);
 	if (!histogram_s_ignore)
 		return NULL;
-	float current_h_S_ignore = histogram[a_left_bin_num+5];
+	float current_h_S_ignore = histogram[a_left_bin_num];
 	for (i = a_left_bin_num; i >= b_left_bin_num; i--)
 	{
-		if (current_h_S_ignore > histogram[i+5])
-			current_h_S_ignore = histogram[i+5];
+		if (current_h_S_ignore > histogram[i])
+			current_h_S_ignore = histogram[i];
 		histogram_s_ignore[i-b_left_bin_num] = current_h_S_ignore;
 	}
 	histogram_s_ignore[length_B] = '\0';
@@ -181,11 +181,11 @@ float	ft_surfaceB1(int a_left_bin_num , int b_left_bin_num , float b_left_bin_pr
 	for (i = 0; i < length_B ; i++)
 	{
 		if (i == length_B - 1)
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_ignore[i]) * b_right_bin_proportion;
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_ignore[i]) * b_right_bin_proportion;
 		else if (i == 0)
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_ignore[i]) * b_left_bin_proportion;
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_ignore[i]) * b_left_bin_proportion;
 		else
-			surfaceB1 += (histogram[b_left_bin_num + i + 5] - histogram_s_ignore[i]);
+			surfaceB1 += (histogram[b_left_bin_num + i] - histogram_s_ignore[i]);
 	}
 	return surfaceB1;
 }
@@ -208,11 +208,11 @@ float	ft_surfaceB2(int a_left_bin_num, int b_left_bin_num, float b_left_bin_prop
 float	selectivity_stricly_left(float *histogram)
 {
 	int	a_min = a[0];
-	float	v_min = histogram[0];
-	float	v_max = histogram[1];
-	float	surface_tot = histogram[2];
-	float	bin_range = histogram[3];
-	float	average_range = histogram[4];
+	float	v_min = histogram[STATISTIC_TARGET];
+	float	v_max = histogram[STATISTIC_TARGET + 1];
+	float	surface_tot = histogram[STATISTIC_TARGET + 2];
+	float	bin_range = histogram[STATISTIC_TARGET + 3];
+	float	average_range = histogram[STATISTIC_TARGET + 4];
 	float	selectivity;
 	float	surface;
 
